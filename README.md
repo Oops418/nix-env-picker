@@ -1,71 +1,67 @@
-# nix-env-picker README
+<div align="center">
+    <h1>Nix Env Picker</h1>
+    <p>
+        <b>Development environment switcher for Nix shells and flakes</b>
+    </p>
+    <p align="center">
+        <a href="https://code.visualstudio.com/api"><img src="https://img.shields.io/badge/VSCode-Developer-blue?logo=Safari" alt="Website"/></a>
+    </p>
+    <p align="center">
+    <a href="#About">About</a> •
+    <a href="#Integration">Integration</a> •
+    <a href="#Usage">Usage</a> •
+    <a href="#Acknowledgements">Acknowledgements</a>
+</p>  
+</div>
 
-This is the README for your extension "nix-env-picker". After writing up a brief description, we recommend including the following sections.
+## About
+
+- Automatically loads saved environment configurations on workspace startup
+
+- Switch between different development environments with a single click
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- Automatically loads saved environment configurations on workspace startup
+- Integrates environment variables from Nix configurations into VS Code
 
-For example if there is an image subfolder under your extension project workspace:
+## Usage
 
-\!\[feature X\]\(images/feature-x.png\)
+1. Install the extension in VS Code
+2. Open the command palette and run the `Nix Env Picker: Set Nix Environment` command
+![select env](resources/usage-select.png)
+3. Select the desired environment from the list and reload the workspace according to the prompt
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+> For Flakes: Please make sure the name of the flake is "flake.nix"
+> 
+> For Shells: Please make sure the content of the file is a valid Nix expression
+> 
+> For both: recommended to use the `nix develop` or `nix-shell` command to enter the environment in the terminal for the first time to test the environment file and download dependencies
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+- `nixEnvPicker.envFile`: Specifies the path to the Nix environment file
+  - You can specify the path to the Nix environment file in the .vscode/settings.json file or reassign the value using command palette
 
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+```json
+{
+    "nixEnvPicker.envFile": "path/to/nix-env-file"
+}
+```
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+- When using a Nix environment file for **the first time**, it may take several minutes to download dependencies. During this initial setup, VS Code might appear unresponsive until the download completes
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+### 0.0.1
 
-### 1.0.0
+Initial release of Nix Env Picker
 
-Initial release of ...
+## TODO
 
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+1. add more log information for debugging or checking the status of the extension
+2. support custom command arguments for entering the environment
+3. auto detect the environment file in the workspace
+4. enter the environment automatically in the terminal after selecting the environment

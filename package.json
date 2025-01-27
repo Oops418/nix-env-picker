@@ -1,13 +1,36 @@
 {
   "name": "nix-env-picker",
   "displayName": "Nix Env Picker",
-  "description": "switch dev env with nix vanilla and flake",
+  "description": "Development environment switcher for Nix shells and flakes, enabling seamless transitions between different Nix configurations",
   "version": "0.0.1",
+  "publisher": "Oops418",
+  "author": {
+    "name": "Oops418",
+    "email": "oooopsXxx@gmail.com"
+  },
+  "icon": "resources/icon.png",
+  "license": "SEE LICENSE IN LICENSE",
+  "preview": true,
   "engines": {
     "vscode": "^1.96.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Oops418/nix-env-picker.git"
+  },
+  "homepage": "https://github.com/Oops418/nix-env-picker",
   "categories": [
     "Other"
+  ],
+  "keywords": [
+    "nix",
+    "env",
+    "switch",
+    "flake",
+    "dev",
+    "nix develop",
+    "nix-shell",
+    "vscode"
   ],
   "activationEvents": [
     "*"
@@ -28,16 +51,6 @@
           "type": "string",
           "default": null,
           "description": "The Path to Nix Env file"
-        },
-        "nixEnvPicker.shellFile": {
-          "type": "string",
-          "default": null,
-          "description": "The path to the command binary"
-        },
-        "nixEnvPicker.cmdArgs": {
-          "type": "string",
-          "default": null,
-          "description": "Additional arguments for command"
         }
       }
     }
