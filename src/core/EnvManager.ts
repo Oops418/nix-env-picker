@@ -25,7 +25,7 @@ enum NixFormat {
 const execAsync = promisify(exec);
 
 class EnvManager {
-  public static async selectNixEnv(picker: NixEnvPicker, workspaceRoot: Uri): Promise<void> {
+  static async selectNixEnv(picker: NixEnvPicker, workspaceRoot: Uri): Promise<void> {
     try {
       const nixFileItems = await this.findNixFiles(workspaceRoot);
       const selectedFile = await this.showFileSelectionDialog(nixFileItems);
@@ -172,7 +172,9 @@ class EnvManager {
   static autoloadEnv(envPath: string, log: vscode.LogOutputChannel): EnvVar[] {
     try {
       const cmd = this.getCmd(envPath);
+      log.info(`exec cmd sync: ${cmd}`);
       const output = execSync(cmd).toString();
+      log.info(`exec cmd finished: ${cmd}`);
       return this.parseExportedVars(output);
     } catch (err) {
       log.error(`Error while autoloadEnv`);
