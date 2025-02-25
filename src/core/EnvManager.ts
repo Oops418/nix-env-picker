@@ -14,6 +14,7 @@ interface EnvVar {
 
 interface NixFileQuickPickItem extends QuickPickItem {
   fullPath: string;
+  ralativePath: string;
 }
 
 enum NixFormat {
@@ -35,7 +36,7 @@ class EnvManager {
         return;
       }
 
-      await this.handleFileSelection(picker, selectedFile);
+      await this.handleFileSelection(picker, selectedFile, workspaceRoot);
     } catch (error) {
       throw error;
     }
@@ -45,12 +46,14 @@ class EnvManager {
     const nixFiles = await workspace.findFiles('*.nix', null);
     const nixFileItems = nixFiles.map(file => ({
       label: path.relative(workspaceRoot.fsPath, file.fsPath),
-      fullPath: file.fsPath
+      fullPath: file.fsPath,
+      ralativePath: "${workspaceFolder}${/}" + path.relative(workspaceRoot.fsPath, file.fsPath)
     }));
 
     nixFileItems.push({
       label: "Browse...",
-      fullPath: ""
+      fullPath: "",
+      ralativePath: "",
     });
 
     return nixFileItems;
@@ -62,17 +65,17 @@ class EnvManager {
     });
   }
 
-  private static async handleFileSelection(picker: NixEnvPicker, selected: NixFileQuickPickItem): Promise<void> {
+  private static async handleFileSelection(picker: NixEnvPicker, selected: NixFileQuickPickItem, workspaceRoot: Uri): Promise<void> {
     if (selected.label === "Browse...") {
-      await this.handleBrowseOption(picker);
+      await this.handleBrowseOption(picker, workspaceRoot);
       return;
     }
 
     picker.log.info(`Selected ${selected.label}`);
-    await this.saveEnvPath(picker, selected.fullPath);
+    await this.saveEnvPath(picker, selected.ralativePath);
   }
 
-  private static async handleBrowseOption(picker: NixEnvPicker): Promise<void> {
+  private static async handleBrowseOption(picker: NixEnvPicker, workspaceRoot: Uri): Promise<void> {
     picker.log.info('Browse selected');
     const result = await window.showOpenDialog({
       canSelectFiles: true,
@@ -81,7 +84,8 @@ class EnvManager {
     });
 
     if (result?.[0]) {
-      await this.saveEnvPath(picker, result[0].fsPath);
+      const ralativePath = "${workspaceFolder}${/}" + path.relative(workspaceRoot.fsPath, result?.[0].fsPath)
+      await this.saveEnvPath(picker, ralativePath);
     } else {
       window.showInformationMessage('No file selected');
       this.resetStatusBar(picker);

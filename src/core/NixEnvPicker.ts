@@ -38,7 +38,7 @@ export class NixEnvPicker {
 
     public autoLoadEnv(picker: NixEnvPicker): string | void {
         try {
-            const envPath = getWorkspaceState(picker.config);
+            const envPath = getWorkspaceState(picker);
             if (!envPath) {
                 picker.log.info('No environment path found in workspace state');
                 return;

@@ -1,4 +1,4 @@
-import { ConfigurationTarget, ExtensionContext, StatusBarAlignment, WorkspaceConfiguration, window, workspace } from 'vscode';
+import { ConfigurationTarget, ExtensionContext, StatusBarAlignment, window, workspace } from 'vscode';
 import { NixEnvPicker } from './core/NixEnvPicker';
 
 const envConfigKey = 'nixEnvPicker.envFile';
@@ -26,8 +26,22 @@ export async function setWorkspaceState(picker: NixEnvPicker, value: string): Pr
   });
 }
 
-export function getWorkspaceState(config: WorkspaceConfiguration): string {
-  return config.get(envConfigKey) ?? "";
+export function getWorkspaceState(picker: NixEnvPicker): string | null {
+  try {
+    const originalConfigValue = picker.config.get<string>(envConfigKey);
+
+    if (!originalConfigValue) {
+      picker.log.info(`The value of ${envConfigKey} is empty`);
+      return null;
+    }
+
+    picker.log.info(`Settings loaded: ${envConfigKey} = ${originalConfigValue}`);
+    return parseVariable(picker, originalConfigValue);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    picker.log.error(`Error retrieving workspace state: ${errorMessage}`);
+    return null;
+  }
 }
 
 export function handleError(picker: NixEnvPicker, logMessage: string, statusBarText: string, windowMessage: string): void {
@@ -43,3 +57,37 @@ export function handleError(picker: NixEnvPicker, logMessage: string, statusBarT
   });
 }
 
+export function parseVariable(picker: NixEnvPicker, value: string): string {
+  if (!value) {
+    return '';
+  }
+
+  if (value.includes('${userHome}')) {
+    const homedir = require('os').homedir();
+    value = value.replace(/\${userHome}/g, homedir);
+  }
+
+  if (value.includes('${workspaceFolder}')) {
+    const workspaceFolder = workspace.workspaceFolders?.[0];
+    if (workspaceFolder) {
+      value = value.replace(/\${workspaceFolder}/g, workspaceFolder.uri.fsPath);
+    }
+  }
+
+  if (value.includes('${workspaceFolderBasename}')) {
+    const workspaceFolder = workspace.workspaceFolders?.[0];
+    if (workspaceFolder) {
+      value = value.replace(/\${workspaceFolderBasename}/g, workspaceFolder.name);
+    }
+  }
+
+  if (value.includes('${pathSeparator}') || value.includes('${/}')) {
+    const pathSeparator = require('path').sep;
+    value = value.replace(/\${pathSeparator}/g, pathSeparator);
+    value = value.replace(/\${\/}/g, pathSeparator);
+  }
+
+  picker.log.info(`Converted value: ${value}`);
+
+  return value;
+}
