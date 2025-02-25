@@ -1,18 +1,8 @@
-import { commands, ExtensionContext } from 'vscode';
-import { setupCore } from './utils';
+import { ExtensionContext } from 'vscode';
+import { activate as activateExtension } from './vscode/activation';
 
 export function activate(context: ExtensionContext) {
-
-	const picker = setupCore(context);
-
-	picker.autoLoadEnv(picker);
-
-	context.subscriptions.push(
-		commands.registerCommand('nix-env-picker.selectNixEnv',
-			async () => await picker.selectEnvironment()
-		)
-	);
+	activateExtension(context);
 }
-
 
 export function deactivate() { }
