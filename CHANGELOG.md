@@ -6,6 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.3] - 2025-02-27
+
+### Fixed
+
+- Fixed naming display in the quick pick menu
+
 ## [0.0.2] - 2025-02-26
 
 ### Added
