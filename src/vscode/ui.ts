@@ -1,4 +1,5 @@
-import { Uri, commands, window } from 'vscode';
+import path from 'path';
+import { Uri, commands, window, workspace } from 'vscode';
 import { Logger, NixEnvironmentFile, UserInterface } from '../helpers/interfaces';
 
 export class VSCodeUI implements UserInterface {
@@ -6,13 +7,13 @@ export class VSCodeUI implements UserInterface {
 
     public async showEnvFileSelector(files: NixEnvironmentFile[]): Promise<NixEnvironmentFile | undefined> {
         const quickPickItems = files.map(file => ({
-            label: file.relativePath,
+            label: file.name,
             file
         }));
 
         quickPickItems.push({
             label: "Browse...",
-            file: { path: "", relativePath: "" }
+            file: { name: "", path: "", relativePath: "" }
         });
 
         const selected = await window.showQuickPick(quickPickItems, {
@@ -29,9 +30,15 @@ export class VSCodeUI implements UserInterface {
                 return undefined;
             }
 
+            const workspaceFolder = workspace.workspaceFolders?.[0];
+            if (!workspaceFolder) {
+                throw new Error('No workspace folder open');
+            }
+
             return {
+                name: path.relative(workspaceFolder.uri.fsPath, uri.fsPath),
                 path: uri.fsPath,
-                relativePath: uri.fsPath
+                relativePath: "${workspaceFolder}${/}" + path.relative(workspaceFolder.uri.fsPath, uri.fsPath)
             };
         }
 

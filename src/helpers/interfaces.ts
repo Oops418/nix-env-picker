@@ -12,6 +12,7 @@ export enum NixFormat {
 }
 
 export interface NixEnvironmentFile {
+    name: string
     path: string;
     relativePath: string;
     format?: NixFormat;

@@ -23,6 +23,7 @@ export class NixEnvironment {
             const nixFiles = await workspace.findFiles('*.nix', null);
 
             return nixFiles.map(file => ({
+                name: path.relative(workspaceRoot, file.fsPath),
                 path: file.fsPath,
                 relativePath: "${workspaceFolder}${/}" + path.relative(workspaceRoot, file.fsPath)
             }));
