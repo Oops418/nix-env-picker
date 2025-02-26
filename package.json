@@ -2,7 +2,7 @@
   "name": "nix-env-picker",
   "displayName": "Nix Env Picker",
   "description": "Development environment switcher for Nix shells and flakes, enabling seamless transitions between different Nix configurations",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "io-github-oops418",
   "author": {
     "name": "Oops418",

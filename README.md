@@ -3,65 +3,81 @@
     <p>
         <b>Development environment switcher for Nix shells and flakes</b>
     </p>
-    <p align="center">
+    <p>
         <a href="https://code.visualstudio.com/api"><img src="https://img.shields.io/badge/VSCode-Developer-blue?logo=Safari" alt="Website"/></a>
     </p>
-    <p align="center">
-    <a href="#About">About</a> •
-    <a href="#Integration">Integration</a> •
-    <a href="#Usage">Usage</a> •
-    <a href="#Acknowledgements">Acknowledgements</a>
-</p>  
+    <p>
+        <a href="#Overview">Overview</a> •
+        <a href="#Getting-Started">Getting Started</a> •
+        <a href="#Acknowledgements">Acknowledgements</a>
+    </p>
 </div>
 
-## About
+## Overview
 
-- Automatically loads saved environment configurations on workspace startup
-
-- Switch between different development environments with a single click
+Nix Env Picker is a VS Code extension that simplifies switching between different Nix-based development environments. It automatically applies environment variables from Nix shells and flakes directly into your VS Code.
 
 ## Features
 
-- Automatically loads saved environment configurations on workspace startup
-- Integrates environment variables from Nix configurations into VS Code
+- **Auto-load environments** on workspace startup
+- **Seamless integration** of environment variables into VS Code
+- **Easy selection** between multiple Nix environment files in your workspace
+- **Status bar indicator** showing current environment status
 
-## Usage
+## Getting Started
 
-1. Install the extension in VS Code
-2. Open the command palette and run the `Nix Env Picker: Set Nix Environment` command
+### Installation
+
+1. Open VS Code
+2. Go to Extensions view (`Ctrl+Shift+X` or `Cmd+Shift+X`)
+3. Search for "Nix Env Picker"
+4. Click Install
+
+### Usage
+
+1. Open your project in VS Code
+2. Open the command palette (`Ctrl+Shift+P` or `Cmd+Shift+P`) or click the status bar indicator
 ![select env](resources/usage-select.png)
-3. Select the desired environment from the list and reload the workspace according to the prompt
+3. Run `Nix Env Picker: Select Env File`
+4. Choose your Nix environment file from the list
+5. Reload window when prompted
 
-> For Flakes: Please make sure the name of the flake is "flake.nix"
-> 
-> For Shells: Please make sure the content of the file is a valid Nix expression
-> 
-> For both: recommended to use the `nix develop` or `nix-shell` command to enter the environment in the terminal for the first time to test the environment file and download dependencies
+### Configuration
 
-## Extension Settings
-
-- `nixEnvPicker.envFile`: Specifies the path to the Nix environment file
-  - You can specify the path to the Nix environment file in the .vscode/settings.json file or reassign the value using command palette
+The settings to your `.vscode/settings.json`:
 
 ```json
 {
-    "nixEnvPicker.envFile": "path/to/nix-env-file"
+  "nixEnvPicker.envFile": "${workspaceFolder}/path/to/nix-env-file"
 }
 ```
 
-## Known Issues
+#### Supported Path Variables
 
-- When using a Nix environment file for **the first time**, it may take several minutes to download dependencies. During this initial setup, VS Code might appear unresponsive until the download completes
+| Path Variable              | Description                              |
+|----------------------------|------------------------------------------|
+| ${workspaceFolder}         | The path of the workspace folder         |
+| ${workspaceFolderBasename} | The name of the workspace folder         |
+| ${userHome}               | The home directory of the current user   |
+| ${pathSeparator} or ${/}   | The platform-specific path separator     |
 
-## Release Notes
+## Important Notes
 
-### 0.0.1
+When using Nix Env Picker, please be aware of the following:
 
-Initial release of Nix Env Picker
+- **Nix File Requirements**:
+  - Flake files must be named `flake.nix` and include proper outputs
+  - Shell files must include `mkShell` in their definition
 
-## TODO
+- **First-time Experience**:
+  - Initial environment setup may take several minutes to download environment dependencies
+  - **Tip**: Running `nix develop` or `nix-shell` directly in terminal first can pre-download dependencies
 
-1. add more log information for debugging or checking the status of the extension
-2. support custom command arguments for entering the environment
-3. auto detect the environment file in the workspace
-4. enter the environment automatically in the terminal after selecting the environment
+## Roadmap
+
+- Support for custom command arguments
+- Automatic terminal environment activation
+
+## Acknowledgements
+
+Special thanks to [nix-env-selector](https://github.com/arrterian/nix-env-selector) for the inspiration behind this project. This extension builds upon the ideas presented in nix-env-selector while offering an alternative implementation.
