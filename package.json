@@ -42,6 +42,11 @@
         "command": "nix-env-picker.selectNixEnv",
         "title": "Select Env File",
         "category": "Nix Env Picker"
+      },
+      {
+        "command": "nix-env-picker.customEnvVars",
+        "title": "Customize Env Variables",
+        "category": "Nix Env Picker"
       }
     ],
     "configuration": {
@@ -51,6 +56,14 @@
           "type": "string",
           "default": null,
           "description": "The Path to Nix Env file"
+        },
+        "nixEnvPicker.customEnvVars": {
+          "type": "object",
+          "default": {
+            "set": {},
+            "unset": []
+          },
+          "description": "Custom environment variables to apply to VSCode"
         }
       }
     }

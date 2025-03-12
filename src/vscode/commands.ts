@@ -22,6 +22,20 @@ export function registerCommands(
         }
     );
 
-    context.subscriptions.push(selectCommand);
+    const customEnvVarsCommand = commands.registerCommand(
+        'nix-env-picker.customEnvVars',
+        async () => {
+            try {
+                statusBar.setLoading();
+                await nixEnv.editCustomEnvVars();
+                statusBar.setDefault();
+            } catch (error) {
+                logger.error(`Error in customEnvVars command: ${error}`);
+                statusBar.setError();
+            }
+        }
+    );
+
+    context.subscriptions.push(selectCommand, customEnvVarsCommand);
     logger.info('Commands registered');
 }

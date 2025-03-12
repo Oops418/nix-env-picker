@@ -1,9 +1,10 @@
 import * as path from 'path';
-import { workspace } from 'vscode';
+import { commands, Uri, workspace } from 'vscode';
 import { ConfigurationManager, Logger, NixEnvironmentFile, UserInterface } from '../helpers/interfaces';
 import { expandVariables } from '../helpers/path';
 import { loadEnvironmentSync } from './envLoader';
-import { applyEnvironmentVariables } from './envVariables';
+import { applyEnvVars, promptCustomEnvVars } from './envVariables';
+// Import the constant from configuration
 
 export class NixEnvironment {
     constructor(
@@ -78,13 +79,38 @@ export class NixEnvironment {
                 return false;
             }
 
-            applyEnvironmentVariables(envVars, this.logger);
+            applyEnvVars(envVars, this.logger);
             this.logger.info(`Successfully loaded environment from: ${envPath}`);
             return true;
         } catch (error) {
             this.logger.error('Error auto-loading environment');
             this.logger.error(error instanceof Error ? error.message : String(error));
             return false;
+        }
+    }
+
+    public async editCustomEnvVars(): Promise<void> {
+        try {
+            await commands.executeCommand('workbench.action.openWorkspaceSettingsFile');
+
+            await this.config.updateCustomEnvVars({
+                set: {},
+                unset: []
+            });
+
+            const workspaceSettingsUri = Uri.joinPath(
+                workspace.workspaceFolders?.[0]?.uri || Uri.file(''),
+                '.vscode',
+                'settings.json'
+            );
+
+            await promptCustomEnvVars(workspaceSettingsUri.fsPath, this.logger);
+
+            await this.ui.saveListener(workspaceSettingsUri.fsPath);
+
+        } catch (error) {
+            this.logger.error('Error loading custom environment variables');
+            throw error;
         }
     }
 }

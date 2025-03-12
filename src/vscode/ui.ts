@@ -1,5 +1,5 @@
 import path from 'path';
-import { Uri, commands, window, workspace } from 'vscode';
+import { TextDocument, Uri, commands, window, workspace } from 'vscode';
 import { Logger, NixEnvironmentFile, UserInterface } from '../helpers/interfaces';
 
 export class VSCodeUI implements UserInterface {
@@ -75,5 +75,24 @@ export class VSCodeUI implements UserInterface {
         });
 
         return result?.[0];
+    }
+
+    public async saveListener(filePath: string): Promise<void> {
+        const saveListener = workspace.onDidSaveTextDocument(async (document: TextDocument) => {
+            if (document.uri.fsPath === filePath) {
+                const selection = await this.showInformationMessage(
+                    'Settings saved. You need to reload VSCode for the changes to take effect.',
+                    'Reload Window'
+                );
+
+                if (selection === 'Reload Window') {
+                    await this.requestReload();
+                }
+
+                if (saveListener) {
+                    saveListener.dispose();
+                }
+            }
+        });
     }
 }

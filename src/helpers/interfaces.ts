@@ -25,15 +25,24 @@ export interface Logger {
     show(): void;
 }
 
+export interface EnvVariables {
+    set: Record<string, string>;
+    unset: string[];
+}
+
 export interface ConfigurationManager {
     getEnvFilePath(): string | null;
     setEnvFilePath(path: string): Promise<boolean>;
+    getCustomEnvVars(): EnvVariables;
+    setCustomEnvVars(envVars: EnvVariables): Promise<boolean>;
+    updateCustomEnvVars(envVars: EnvVariables): Promise<boolean>;
 }
 
 export interface UserInterface {
     showEnvFileSelector(files: NixEnvironmentFile[]): Promise<NixEnvironmentFile | undefined>;
     showErrorMessage(message: string): Promise<void>;
     showInformationMessage(message: string, ...actions: string[]): Promise<string | undefined>;
+    saveListener(filePath: string): Promise<void>;
     requestReload(): Promise<void>;
     browsePath(): Promise<Uri | undefined>;
 }
