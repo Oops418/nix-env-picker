@@ -1,5 +1,5 @@
 import path from 'path';
-import { TextDocument, Uri, commands, window, workspace } from 'vscode';
+import { Range, Selection, TextDocument, Uri, commands, window, workspace } from 'vscode';
 import { Logger, NixEnvironmentFile, UserInterface } from '../helpers/interfaces';
 
 export class VSCodeUI implements UserInterface {
@@ -94,5 +94,26 @@ export class VSCodeUI implements UserInterface {
                 }
             }
         });
+    }
+
+    public async locateKeyLocation(key: string, workspaceSettingsUri: string, logger: Logger): Promise<void> {
+        const settingsDoc = await workspace.openTextDocument(workspaceSettingsUri);
+
+        if (!settingsDoc.fileName) {
+            throw new Error('Failed to open settings.json file');
+        }
+
+        const settingsText = settingsDoc.getText();
+
+        const editor = await window.showTextDocument(settingsDoc);
+
+        const keyPattern = new RegExp(`"${key}"\\s*:`);
+        const match = keyPattern.exec(settingsText);
+
+        if (match) {
+            const pos = settingsDoc.positionAt(match.index);
+            editor.selection = new Selection(pos, pos);
+            editor.revealRange(new Range(pos, pos));
+        }
     }
 }

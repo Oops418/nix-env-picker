@@ -44,8 +44,18 @@
         "category": "Nix Env Picker"
       },
       {
+        "command": "nix-env-picker.terminalAutoActivate",
+        "title": "Toggle Terminal Auto-Activation",
+        "category": "Nix Env Picker"
+      },
+      {
         "command": "nix-env-picker.customEnvVars",
         "title": "Customize Env Variables",
+        "category": "Nix Env Picker"
+      },
+      {
+        "command": "nix-env-picker.terminalActivateCommand",
+        "title": "Customize Terminal Auto-Activation Command",
         "category": "Nix Env Picker"
       }
     ],
@@ -64,6 +74,16 @@
             "unset": []
           },
           "description": "Custom environment variables to apply to VSCode"
+        },
+        "nixEnvPicker.terminalAutoActivate": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically activate Nix environment in new terminals"
+        },
+        "nixEnvPicker.terminalActivateCommand": {
+          "type": "string",
+          "default": null,
+          "description": "The command to activate the Nix environment in new terminals"
         }
       }
     }

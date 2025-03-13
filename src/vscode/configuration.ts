@@ -1,8 +1,12 @@
 import { ConfigurationTarget, workspace } from 'vscode';
 import { ConfigurationManager, EnvVariables, Logger } from '../helpers/interfaces';
+import { expandVariables } from '../helpers/path';
+import { detectNixFormat, getTerminalAutoActivateCommand } from '../helpers/process';
 
 const ENV_CONFIG_KEY = 'nixEnvPicker.envFile';
 export const CUSTOM_ENV_VARS_KEY = 'nixEnvPicker.customEnvVars';
+const AUTO_ACTIVATE_STATUS_KEY = 'nixEnvPicker.terminalAutoActivate';
+export const AUTO_ACTIVATE_COMMAND_KEY = 'nixEnvPicker.terminalActivateCommand';
 
 export class VSCodeConfigManager implements ConfigurationManager {
     constructor(private logger: Logger) { }
@@ -67,20 +71,62 @@ export class VSCodeConfigManager implements ConfigurationManager {
         }
     }
 
-    public async updateCustomEnvVars(envVars: EnvVariables): Promise<boolean> {
+    public async initCustomEnvVars(): Promise<void> {
         try {
             const existingEnvVars = this.getCustomEnvVars();
-            const updatedEnvVars = {
-                set: { ...existingEnvVars.set, ...envVars.set },
-                unset: [...existingEnvVars.unset, ...envVars.unset]
-            };
-            const config = workspace.getConfiguration();
-            await config.update(CUSTOM_ENV_VARS_KEY, updatedEnvVars, ConfigurationTarget.Workspace);
-            this.logger.info(`Config updated: ${CUSTOM_ENV_VARS_KEY}`);
-            return true;
+            if (Object.keys(existingEnvVars.set).length > 0 || existingEnvVars.unset.length > 0) {
+                return;
+            } else {
+                await this.setCustomEnvVars({ set: {}, unset: [] });
+            }
         } catch (error) {
-            this.logger.error(`Error setting custom env vars configuration: ${error}`);
-            return false;
+            throw new Error(`Error initializing custom env vars configuration: ${error}`);
         }
+    }
+
+    public async initAutoActivateCommand(): Promise<void> {
+        const config = workspace.getConfiguration();
+        if (!config.get<string>(AUTO_ACTIVATE_COMMAND_KEY)) {
+            await config.update(AUTO_ACTIVATE_COMMAND_KEY, " ", ConfigurationTarget.Workspace);
+            return;
+        }
+        return;
+    }
+
+    public getAutoActivateStatus(): boolean {
+        const config = workspace.getConfiguration();
+        const value = config.get<boolean>(AUTO_ACTIVATE_STATUS_KEY, false);
+        return value;
+    }
+
+    public getAutoActivateCommand(): string {
+        try {
+            const config = workspace.getConfiguration();
+            const value = config.get<string>(AUTO_ACTIVATE_COMMAND_KEY);
+            if (!value) {
+                const envFilePath = this.getEnvFilePath();
+                if (!envFilePath) {
+                    return '';
+                }
+                const expandedPath = expandVariables(envFilePath, this.logger);
+                const format = detectNixFormat(expandedPath, this.logger);
+                const cmd = getTerminalAutoActivateCommand(expandedPath, format);
+                this.logger.info(`Terminal auto-activate using default command: ${cmd}`);
+                return cmd;
+            } else {
+                this.logger.info(`Terminal auto-activate using configured command: ${value}`);
+                return value;
+            }
+        } catch (error) {
+            this.logger.error(`Error getting auto activate command: ${error}`);
+            return '';
+        }
+    }
+
+    public async setAutoActivateStatus(status: boolean): Promise<boolean> {
+        const config = workspace.getConfiguration();
+        await config.update(AUTO_ACTIVATE_STATUS_KEY, status, ConfigurationTarget.Workspace);
+        this.logger.info(`Config updated: ${AUTO_ACTIVATE_STATUS_KEY} = ${status}`);
+        return true;
     }
 }

@@ -1,12 +1,11 @@
 import { commands, ExtensionContext } from 'vscode';
-import { Logger } from '../helpers/interfaces';
-import { NixEnvironment } from '../plugin/nixEnv';
+import { Logger, NixEnvironmentPicker, StatusBar } from '../helpers/interfaces';
 
 export function registerCommands(
     context: ExtensionContext,
-    nixEnv: NixEnvironment,
-    statusBar: { setLoading: () => void, setDefault: () => void, setError: () => void },
-    logger: Logger
+    nixEnv: NixEnvironmentPicker,
+    statusBar: StatusBar,
+    logger: Logger,
 ): void {
     const selectCommand = commands.registerCommand(
         'nix-env-picker.selectNixEnv',
@@ -17,6 +16,20 @@ export function registerCommands(
                 statusBar.setDefault();
             } catch (error) {
                 logger.error(`Error in selectNixEnv command: ${error}`);
+                statusBar.setError();
+            }
+        }
+    );
+
+    const toggleTerminalAutoActivateCommand = commands.registerCommand(
+        'nix-env-picker.terminalAutoActivate',
+        async () => {
+            try {
+                statusBar.setLoading();
+                await nixEnv.toggleTerminalAutoActivate();
+                statusBar.setDefault();
+            } catch (error) {
+                logger.error(`Error in toggleAutoActivate command: ${error}`);
                 statusBar.setError();
             }
         }
@@ -36,6 +49,20 @@ export function registerCommands(
         }
     );
 
-    context.subscriptions.push(selectCommand, customEnvVarsCommand);
+    const customTerminalActivateCommand = commands.registerCommand(
+        'nix-env-picker.terminalActivateCommand',
+        async () => {
+            try {
+                statusBar.setLoading();
+                await nixEnv.editTerminalAutoActivateCommand();
+                statusBar.setDefault();
+            } catch (error) {
+                logger.error(`Error in terminalActivateCommand command: ${error}`);
+                statusBar.setError();
+            }
+        }
+    );
+
+    context.subscriptions.push(selectCommand, customEnvVarsCommand, toggleTerminalAutoActivateCommand, customTerminalActivateCommand);
     logger.info('Commands registered');
 }

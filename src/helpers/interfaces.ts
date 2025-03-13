@@ -1,4 +1,4 @@
-import { Uri } from 'vscode';
+import { Terminal, Uri } from 'vscode';
 
 export interface EnvVar {
     name: string;
@@ -25,6 +25,12 @@ export interface Logger {
     show(): void;
 }
 
+export interface StatusBar {
+    setLoading(): void;
+    setDefault(): void;
+    setError(): void;
+}
+
 export interface EnvVariables {
     set: Record<string, string>;
     unset: string[];
@@ -35,7 +41,10 @@ export interface ConfigurationManager {
     setEnvFilePath(path: string): Promise<boolean>;
     getCustomEnvVars(): EnvVariables;
     setCustomEnvVars(envVars: EnvVariables): Promise<boolean>;
-    updateCustomEnvVars(envVars: EnvVariables): Promise<boolean>;
+    initCustomEnvVars(): Promise<void>;
+    getAutoActivateStatus(): boolean;
+    setAutoActivateStatus(status: boolean): Promise<boolean>;
+    initAutoActivateCommand(): Promise<void>;
 }
 
 export interface UserInterface {
@@ -45,4 +54,14 @@ export interface UserInterface {
     saveListener(filePath: string): Promise<void>;
     requestReload(): Promise<void>;
     browsePath(): Promise<Uri | undefined>;
+    locateKeyLocation(key: string, workspaceSettingsUri: string, logger: Logger): Promise<void>;
+}
+
+export interface NixEnvironmentPicker {
+    selectAndSaveEnvironment(): Promise<void>;
+    autoLoadEnvironment(): boolean;
+    activateInTerminal(terminal: Terminal, activationCommand: string): boolean;
+    editCustomEnvVars(): Promise<void>;
+    toggleTerminalAutoActivate(): Promise<void>;
+    editTerminalAutoActivateCommand(): Promise<void>;
 }

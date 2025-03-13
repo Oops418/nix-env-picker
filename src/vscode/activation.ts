@@ -1,9 +1,10 @@
 import { ExtensionContext } from 'vscode';
-import { NixEnvironment } from '../plugin/nixEnv';
+import { NixEnvPicker } from '../plugin/nixEnvPicker';
 import { registerCommands } from './commands';
 import { VSCodeConfigManager } from './configuration';
 import { VSCodeLogger } from './logger';
 import { StatusBarManager } from './statusBar';
+import { TerminalManager } from './terminal';
 import { VSCodeUI } from './ui';
 
 export function activate(context: ExtensionContext): void {
@@ -13,11 +14,13 @@ export function activate(context: ExtensionContext): void {
     try {
         const configManager = new VSCodeConfigManager(logger);
         const ui = new VSCodeUI(logger);
+        const nixEnv = new NixEnvPicker(logger, configManager, ui);
 
         const statusBar = new StatusBarManager(logger);
         context.subscriptions.push(statusBar);
 
-        const nixEnv = new NixEnvironment(logger, configManager, ui);
+        const terminalManager = new TerminalManager(logger, configManager, nixEnv);
+        context.subscriptions.push(terminalManager);
 
         registerCommands(context, nixEnv, statusBar, logger);
 
