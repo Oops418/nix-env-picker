@@ -15,6 +15,8 @@ export function parseExportedVars(output: string, logger: Logger): EnvVar[] {
     return vars;
 }
 
+
+
 export function applyEnvVars(envVars: EnvVar[], logger: Logger): void {
     try {
         envVars.forEach(({ name, value }) => {

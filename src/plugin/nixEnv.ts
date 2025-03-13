@@ -66,10 +66,6 @@ export class NixEnvironment {
     public autoLoadEnvironment(): boolean {
         try {
             const envPath = this.config.getEnvFilePath();
-            if (!envPath) {
-                this.logger.info('No environment path configured');
-                return false;
-            }
 
             const expandedPath = expandVariables(envPath, this.logger);
             const envVars = loadEnvironmentSync(expandedPath, this.logger);

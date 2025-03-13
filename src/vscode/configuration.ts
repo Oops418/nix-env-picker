@@ -7,21 +7,21 @@ export const CUSTOM_ENV_VARS_KEY = 'nixEnvPicker.customEnvVars';
 export class VSCodeConfigManager implements ConfigurationManager {
     constructor(private logger: Logger) { }
 
-    public getEnvFilePath(): string | null {
+    public getEnvFilePath(): string {
         try {
             const config = workspace.getConfiguration();
             const value = config.get<string>(ENV_CONFIG_KEY);
 
             if (!value) {
                 this.logger.info(`No value found for ${ENV_CONFIG_KEY}`);
-                return null;
+                return "";
             }
 
             this.logger.info(`Config loaded: ${ENV_CONFIG_KEY} = ${value}`);
             return value;
         } catch (error) {
             this.logger.error(`Error getting configuration: ${error}`);
-            return null;
+            return "";
         }
     }
 

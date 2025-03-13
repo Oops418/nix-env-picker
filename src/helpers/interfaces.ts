@@ -31,7 +31,7 @@ export interface EnvVariables {
 }
 
 export interface ConfigurationManager {
-    getEnvFilePath(): string | null;
+    getEnvFilePath(): string;
     setEnvFilePath(path: string): Promise<boolean>;
     getCustomEnvVars(): EnvVariables;
     setCustomEnvVars(envVars: EnvVariables): Promise<boolean>;
