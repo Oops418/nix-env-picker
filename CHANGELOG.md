@@ -6,6 +6,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.4] - 2025-03-13
+
+### Added
+
+- Custom environment variables ([#2](https://github.com/Oops418/nix-env-picker/issues/2))
+- Auto activation of Nix environment in terminal
+
 ## [0.0.3] - 2025-02-27
 
 ### Fixed
@@ -16,7 +23,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ### Added
 
-- Support for variable references in settings.json (#1)
+- Support for variable references in settings.json ([#1](https://github.com/Oops418/nix-env-picker/issues/1))
 
 ### Changed
 
