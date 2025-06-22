@@ -1,0 +1,20 @@
+name: ci
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish-open-vsx:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm install
+      - run: npm i -g ovsx
+      - run: ovsx create-namespace "${{ vars.PUBLISHER }}" -p "${{ secrets.OPEN_VSX_TOKEN }}" || true
+      - run: ovsx publish -p "${{ secrets.OPEN_VSX_TOKEN }}"
